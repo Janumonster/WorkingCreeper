@@ -1,0 +1,13 @@
+# Camera2踩坑记录
+
+1、在每个回调中都会有一个handler参数，在看见的很多样例中都是使用后台线程的handler，但我在将其封装到一个自己的Camera2的类中时，在类中开一个进程，发现会出现无法运用到surface的现象？
+
+解答：因为采用异步线程，所以surface还未create，所以在session的参数中报错，所以要设置surfaceHolder的callback，在确定Surfacecreated之后再进行色三四年的创建。
+
+目前我的解决办法还是直接使用主线程的handler，还不知道对性能的影响有多大，还在学习，相信之后会有跟好的办法。
+
+2、如何获取相机设备支持的宽高比？
+
+从camera1刚转到camera2，一开始还是有点蒙的，很多信息不知道怎么获得。通过查阅之后，通过characteristic，获取StreamConfigurationMap，在通过getOutputSize来获得，其中getOutputSize可以指定泛型，这里获得的是一个Size数组，更具需求选取数据。
+
+3、Surface was abandoned，出现这种错误是说明surface不见了，查看布局的visibility属性，是否设置正确特别是在和activity生命周期相融合时要特别小心。这个错误主要就是显示的问题，所以要看你的surface是否出错。花了一天时间改来改去。凸凸
